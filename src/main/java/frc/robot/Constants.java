@@ -20,15 +20,16 @@ public final class Constants {
     public static final int driveTrain_Left2 = 12;
     public static final int driveTrain_Right1 = 13;
     public static final int driveTrain_Right2 = 14;
-    public static final int intakeWheels = 21;
-    public static final int intakeArm = 22;
-    public static final int elevatorLeft = 23;
-    public static final int elevatorRight = 24;
-    public static final int slider = 25;
+    public static final int elevatorLeft = 21;
+    public static final int elevatorRight = 22;
+    public static final int slider = 23;
+    public static final int intakeArmLeft = 26;
+    public static final int intakeArmRight = 27;
+    public static final int intakeWheels = 28;
   }
   public static class ElevatorConstants {
     public static final boolean kMotorLeft_inverted = false;
-    public static final boolean kMotorRight_inverted = false;
+    public static final boolean kMotorRight_inverted = true;
     public static final int kCurrentLimit = 40;
     public static final double kElevatorGearRatio = 1 / (5 * 4); // 5:1 * 4:1
     // RevRobotics 16T Sprocket pitch size is 1.29 inches

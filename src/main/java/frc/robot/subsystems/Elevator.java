@@ -29,9 +29,9 @@ public class Elevator extends SubsystemBase {
     m_motorLeft.burnFlash();
 
     m_motorRight = new CANSparkMax(CAN_IDs.elevatorRight, MotorType.kBrushless);
-    m_motorRight.setInverted(ElevatorConstants.kMotorRight_inverted);
     m_motorRight.setIdleMode(IdleMode.kBrake);
     m_motorRight.setSmartCurrentLimit(ElevatorConstants.kCurrentLimit);
+    m_motorRight.follow(m_motorLeft, ElevatorConstants.kMotorRight_inverted);
     m_motorRight.burnFlash();
 
     m_encoderLeft = m_motorLeft.getEncoder();
@@ -53,10 +53,16 @@ public class Elevator extends SubsystemBase {
 
   private void setSpeed(double speed) {
     m_motorLeft.set(speed);
-    m_motorRight.set(speed);
+    // m_motorRight was set to follow m_motorLeft
+    // m_motorRight.set(speed);
   }
 
-  private boolean elevatorIsNotSafe() {
+  public CommandBase stopCmd() {
+    return this.runOnce(() -> setSpeed(0))
+              .withName("Elevator Stop Command");
+  }
+
+  public boolean elevatorIsNotSafe() {
     double leftPosition = m_encoderLeft.getPosition();
     double rightPosition = m_encoderRight.getPosition();
     return ((leftPosition < ElevatorConstants.kMinTravelInInches) ||
