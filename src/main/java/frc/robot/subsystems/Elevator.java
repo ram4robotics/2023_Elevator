@@ -123,5 +123,6 @@ public class Elevator extends SubsystemBase {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("LeftPosition", m_encoderLeft.getPosition());
     SmartDashboard.putNumber("RightPosition", m_encoderRight.getPosition());
+    SmartDashboard.putBoolean("Is Elevator in Safe position?", !elevatorIsNotSafe());
   }
 }
