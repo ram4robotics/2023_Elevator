@@ -62,13 +62,23 @@ public class Elevator extends SubsystemBase {
               .withName("Elevator Stop Command");
   }
 
-  public boolean elevatorIsNotSafe() {
+  public boolean elevatorCanGoLower() {
     double leftPosition = m_encoderLeft.getPosition();
     double rightPosition = m_encoderRight.getPosition();
-    return ((leftPosition < ElevatorConstants.kMinTravelInInches) ||
-          (leftPosition > ElevatorConstants.kMaxTravelInInches) ||
-          (rightPosition < ElevatorConstants.kMinTravelInInches) ||
-          (rightPosition > ElevatorConstants.kMaxTravelInInches));
+    return ((leftPosition > ElevatorConstants.kMinTravelInInches) &&
+            (rightPosition > ElevatorConstants.kMinTravelInInches));
+  }
+
+  public boolean elevatorCanGoHigher() {
+    double leftPosition = m_encoderLeft.getPosition();
+    double rightPosition = m_encoderRight.getPosition();
+    return ((leftPosition < ElevatorConstants.kMaxTravelInInches) &&
+            (rightPosition < ElevatorConstants.kMaxTravelInInches));
+  }
+
+  public boolean elevatorIsNotSafe() {
+    return ((m_motorLeft.getOutputCurrent() > ElevatorConstants.kCurrentLimit) ||
+            (m_motorRight.getOutputCurrent() > ElevatorConstants.kCurrentLimit));
   }
 
   public boolean elevatorIsAtHeight(double height) {
@@ -78,12 +88,12 @@ public class Elevator extends SubsystemBase {
 
   public CommandBase raise() {
     return this.runOnce(() -> setSpeed(ElevatorConstants.kElevatorSpeedUp))
-              .unless(() -> elevatorIsNotSafe());
+              .unless(() -> elevatorIsNotSafe() || !elevatorCanGoHigher());
   }
 
   public CommandBase lower() {
     return this.runOnce(() -> setSpeed(ElevatorConstants.kElevatorSpeedDown))
-              .unless(() -> elevatorIsNotSafe());
+              .unless(() -> elevatorIsNotSafe() || !elevatorCanGoLower());
   }
 
   public CommandBase raiseToHeight(double desiredHeight) {
@@ -124,5 +134,7 @@ public class Elevator extends SubsystemBase {
     SmartDashboard.putNumber("LeftPosition", m_encoderLeft.getPosition());
     SmartDashboard.putNumber("RightPosition", m_encoderRight.getPosition());
     SmartDashboard.putBoolean("Is Elevator in Safe position?", !elevatorIsNotSafe());
+    SmartDashboard.putBoolean("ElevatorCanGoHigher", elevatorCanGoHigher());
+    SmartDashboard.putBoolean("ElevatorCanGoLower", elevatorCanGoLower());
   }
 }
